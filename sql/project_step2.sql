@@ -8,7 +8,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 
-DROP TABLE IF EXISTS service_ticket_items
+DROP TABLE IF EXISTS service_ticket_items;
 DROP TABLE IF EXISTS rental_order_items;
 DROP TABLE IF EXISTS service_tickets;
 DROP TABLE IF EXISTS rental_orders;
@@ -16,14 +16,12 @@ DROP TABLE IF EXISTS gear_items;
 DROP TABLE IF EXISTS employees;
 DROP TABLE IF EXISTS customers;
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 /* customers table to store people who rent gear */
 CREATE TABLE customers (
     customer_id INT AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) NULL,
     phone VARCHAR(20) NULL,
     email VARCHAR(255) NULL,
     PRIMARY KEY (customer_id)
@@ -47,7 +45,7 @@ CREATE TABLE gear_items (
     brand VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
     serial_number VARCHAR(100) NOT NULL,
-    size VARCHAR(50) NOT NULL,
+    size VARCHAR(20) NOT NULL,
     condition_grade ENUM('new', 'good', 'fair', 'needs_repair') NOT NULL,
     status ENUM('available', 'rented', 'in_service','retired') NOT NULL,
     acquired_at DATETIME NOT NULL,
@@ -62,8 +60,12 @@ CREATE TABLE rental_orders (
     created_by_employee_id INT NOT NULL,
     created_at DATETIME NOT NULL,
     PRIMARY KEY (rental_order_id),
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (created_by_employee_id) REFERENCES employees(employee_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 /* service_tickets table for each repair ticket opened by an employee*/
@@ -74,6 +76,8 @@ CREATE TABLE service_tickets (
     created_at DATETIME NOT NULL,
     PRIMARY KEY (service_ticket_id),
     FOREIGN KEY (opened_by_employee_id) REFERENCES employees(employee_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 /* rental_order_items intersection table for M:M relationship between rental_orders and gear_items */
@@ -84,8 +88,13 @@ CREATE TABLE rental_order_items(
     due_at DATETIME NOT NULL,
     returned_at DATETIME NULL,
     PRIMARY KEY (rental_order_id, gear_item_id),
-    FOREIGN KEY (rental_order_id) REFERENCES rental_orders(rental_order_id),
+    FOREIGN KEY (rental_order_id) REFERENCES rental_orders(rental_order_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (gear_item_id) REFERENCES gear_items(gear_item_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+    
 );
 
 /* service_ticket_items intersection table for M:M relationship between service_tickets and gear_items */
@@ -96,8 +105,12 @@ CREATE TABLE service_ticket_items (
     started_at DATETIME NULL,
     completed_at DATETIME NULL,
     PRIMARY KEY (service_ticket_id, gear_item_id),
-    FOREIGN KEY (service_ticket_id) REFERENCES service_tickets(service_ticket_id),
+    FOREIGN KEY (service_ticket_id) REFERENCES service_tickets(service_ticket_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (gear_item_id) REFERENCES gear_items(gear_item_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 /* SAMPLE DATA */
