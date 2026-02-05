@@ -23,7 +23,6 @@ CREATE TABLE customers (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NULL,
     phone VARCHAR(20) NULL,
-    email VARCHAR(255) NULL,
     PRIMARY KEY (customer_id)
 );
 
