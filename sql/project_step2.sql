@@ -3,8 +3,24 @@
     Group 80: Joshua Cabalka, Jack Boland, Philip Gadsden
 */
 
+
+SET FOREIGN_KEY_CHECKS = 0;
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+
+DROP TABLE IF EXISTS service_ticket_items
+DROP TABLE IF EXISTS rental_order_items;
+DROP TABLE IF EXISTS service_tickets;
+DROP TABLE IF EXISTS rental_orders;
+DROP TABLE IF EXISTS gear_items;
+DROP TABLE IF EXISTS employees;
+DROP TABLE IF EXISTS customers;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+/* customers table to store people who rent gear */
 CREATE TABLE customers (
-    customer_id AUTO_INCREMENT,
+    customer_id INT AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -13,15 +29,18 @@ CREATE TABLE customers (
     PRIMARY KEY (customer_id)
 );
 
+/* employees table to store staff members from the resort */
 CREATE TABLE employees (
-    employee_id AUTO_INCREMENT,
+    employee_id INT AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     role VARCHAR(50) NOT NULL,
+    /* is_active shows if employee is currently employed and can create tickets */
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (employee_id)
 );
 
+/* gear_items table stores each physical piece of rentable and/or serviceable gear*/
 CREATE TABLE gear_items (
     gear_item_id INT AUTO_INCREMENT,
     category ENUM('snowboard', 'boots', 'helmet', 'other') NOT NULL,
@@ -36,6 +55,7 @@ CREATE TABLE gear_items (
     UNIQUE (serial_number)
 );
 
+/* rental_orders table for each checkout transaction created by an employee for a customer*/
 CREATE TABLE rental_orders (
     rental_order_id INT AUTO_INCREMENT,
     customer_id INT NOT NULL,
@@ -46,6 +66,7 @@ CREATE TABLE rental_orders (
     FOREIGN KEY (created_by_employee_id) REFERENCES employees(employee_id)
 );
 
+/* service_tickets table for each repair ticket opened by an employee*/
 CREATE TABLE service_tickets (
     service_ticket_id INT AUTO_INCREMENT,
     opened_by_employee_id INT NOT NULL,
@@ -55,6 +76,7 @@ CREATE TABLE service_tickets (
     FOREIGN KEY (opened_by_employee_id) REFERENCES employees(employee_id)
 );
 
+/* rental_order_items intersection table for M:M relationship between rental_orders and gear_items */
 CREATE TABLE rental_order_items(
     rental_order_id INT NOT NULL,
     gear_item_id INT NOT NULL,
@@ -66,6 +88,7 @@ CREATE TABLE rental_order_items(
     FOREIGN KEY (gear_item_id) REFERENCES gear_items(gear_item_id)
 );
 
+/* service_ticket_items intersection table for M:M relationship between service_tickets and gear_items */
 CREATE TABLE service_ticket_items (
     service_ticket_id INT NOT NULL,
     gear_item_id INT NOT NULL,
@@ -77,18 +100,23 @@ CREATE TABLE service_ticket_items (
     FOREIGN KEY (gear_item_id) REFERENCES gear_items(gear_item_id)
 );
 
+/* SAMPLE DATA */
+
+/* Customers info */
 INSERT INTO customers (first_name, last_name, phone, email)
 VALUES
 ('John', 'Doe', '541-555-0101', 'john.doe@example.com'),
 ('Noah', 'Patel', NULL, 'noah.patel@example.com'),
 ('Mia', 'Johnson', '541-555-0103', NULL);
 
+/* Employees info */
 INSERT INTO employees (first_name, last_name, role, is_active)
 VALUES
 ('Shaun', 'White', 'rental_associate', TRUE),
 ('Travis', 'Rice', 'service_tech', TRUE),
 ('Lindsey', 'Vonn', 'manager', FALSE);
 
+/* Gear Items info */
 INSERT INTO gear_items (category, brand, model, serial_number, size, condition_grade, status, acquired_at)
 VALUES
 ('snowboard', 'Burton', 'Process', 'SNB-0001', '155', 'good', 'available', '2024-11-01 09:00:00'),
@@ -96,26 +124,34 @@ VALUES
 ('helmet', 'Smith', 'Vantage', 'HLT-0201', 'M', 'new', 'in_service', '2024-10-15 14:00:00'),
 ('other', 'Dakine', 'Wrist Guard', 'OTH-0301', 'L', 'good', 'retired', '2022-01-05 08:15:00');
 
+/* Rental Order info */
 INSERT INTO rental_orders (customer_id, created_by_employee_id, created_at)
 VALUES
 (1, 1, '2026-02-01 10:00:00'),
 (2, 1, '2026-02-02 11:15:00'),
 (3, 1, '2026-02-03 09:20:00');
 
+/* Rental Order Items info */
 INSERT INTO rental_order_items (rental_order_id, gear_item_id, checked_out_at, due_at, returned_at)
 VALUES
 (1, 2, '2026-02-01 10:05:00', '2026-02-03 10:05:00', NULL),
 (2, 1, '2026-02-02 11:20:00', '2026-02-04 11:20:00', '2026-02-03 16:45:00'),
 (3, 1, '2026-02-03 09:25:00', '2026-02-05 09:25:00', NULL);
 
+/* Service Tickets info */
 INSERT INTO service_tickets (opened_by_employee_id, status, created_at)
 VALUES
 (2, 'open', '2026-02-01 08:30:00'),
 (2, 'in_progress', '2026-02-02 13:00:00'),
 (2, 'completed', '2026-02-03 15:10:00');
 
+/* Service Ticket Items info */
 INSERT INTO service_ticket_items (service_ticket_id, gear_item_id, service_type, started_at, completed_at)
 VALUES
 (1, 3, 'inspect', NULL, NULL),
 (2, 3, 'repair', '2026-02-02 13:15:00', NULL),
 (3, 3, 'wax', '2026-02-03 15:20:00', '2026-02-03 16:05:00');
+
+COMMIT;
+SET AUTOCOMMIT = 1;
+SET FOREIGN_KEY_CHECKS = 1;
