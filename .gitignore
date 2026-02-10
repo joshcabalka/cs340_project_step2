@@ -1,0 +1,18 @@
+# Python
+__pychache__/
+*.pyc
+*.pyo
+
+# Virtural envs
+.venv/
+venv/
+frontend/.venv/
+
+# Secrets
+.env
+*.env
+
+# Editor misc
+.DS_store
+Thumbs.db
+.vscode/
