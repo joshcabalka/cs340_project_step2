@@ -252,25 +252,51 @@ def delete_gear_item_record():
 # Browse rental orders
 @app.route("/rental_orders", methods=["GET"])
 def render_rental_orders_page():
-    #TODO SELECT rental_orders
+    # Select all rental orders
+    rental_order_rows = run_select("SELECT * FROM rental_orders ORDER BY rental_order_id")
     return render_template("rental_orders.html", rows=rental_order_rows)
 
 # Add one rental_orders record
 @app.route("/rental_orders/add", methods=["POST"])
 def add_rental_order_record():
-    #TODO INSERT into rental_orders
+    rental_order_customer_id = request.form.get("customer_id")
+    rental_order_created_by_employee_id = request.form.get("created_by_employee_id")
+    rental_order_created_at = request.form.get("created_at", "").strip()
+    # Take the input data and add it to the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO rental_orders (customer_id, created_by_employee_id, created_at)
+        VALUES (%s, %s, %s)
+        """,
+        (rental_order_customer_id, rental_order_created_by_employee_id, rental_order_created_at),
+    )
     return redirect(url_for("render_rental_orders_page"))
 
 # Update one rental_orders record by rental_order_id
 @app.route("/rental_orders/update", methods=["POST"])
 def update_rental_order_record():
-    #TODO UPDATE rental_orders
+    target_rental_order_id = request.form.get("rental_order_id")
+    updated_customer_id = request.form.get("customer_id")
+    updated_created_by_employee_id = request.form.get("created_by_employee_id")
+    updated_created_at = request.form.get("created_at").strip()
+
+    # Take the input data and update the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE rental_orders
+        SET customer_id = %s, created_by_employee_id = %s, created_at = %s
+        WHERE rental_order_id = %s
+        """,
+        (updated_customer_id, updated_created_by_employee_id, updated_created_at, target_rental_order_id),
+    )
     return redirect(url_for("render_rental_orders_page"))
 
 # Delete one rental_orders record by rental_order_id
 @app.route("/rental_orders/delete", methods=["POST"])
 def delete_rental_order_record():
-    #TODO DELETE from rental_orders
+    rental_order_id_to_delete = request.form.get("rental_order_id")
+    # Take the input data and delete that specific rental order 
+    run_action("DELETE FROM rental_orders WHERE rental_order_id = %s", (rental_order_id_to_delete,))
     return redirect(url_for("render_rental_orders_page"))
 
 # RENTAL ORDER ITEMS ROUTES
