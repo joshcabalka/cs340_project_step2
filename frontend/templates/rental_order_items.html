@@ -1,3 +1,70 @@
 <!-- Rental order items page using this pattern: -->
  <!-- Title, browse table, add, update, delete, back to index nav -->
   <!-- Bind all fields and actions to the rental_order_items table -->
+   <!-- templates/rental_orders.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rental Orders</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <a href="{{ url_for('render_index_page') }}">Back to Index</a>
+      <h1>Rental Orders</h1>
+    </div>
+
+    <div class="panel">
+      <h2>Browse</h2>
+      <table>
+        <tr>
+          <th>rental_order_id</th>
+          <th>customer_id</th>
+          <th>created_by_employee_id</th>
+          <th>created_at</th>
+        </tr>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.rental_order_id }}</td>
+          <td>{{ row.customer_id }}</td>
+          <td>{{ row.created_by_employee_id }}</td>
+          <td>{{ row.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Add</h2>
+      <form method="post" action="/rental_orders/add">
+        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+        <div class="row"><label>created_by_employee_id</label><input name="created_by_employee_id" required></div>
+        <div class="row"><label>created_at</label><input name="created_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Update</h2>
+      <form method="post" action="/rental_orders/update">
+        <div class="row"><label>rental_order_id</label><input name="rental_order_id" required></div>
+        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+        <div class="row"><label>created_by_employee_id</label><input name="created_by_employee_id" required></div>
+        <div class="row"><label>created_at</label><input name="created_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
+        <button type="submit">Update</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Delete</h2>
+      <form method="post" action="/rental_orders/delete">
+        <div class="row"><label>rental_order_id</label><input name="rental_order_id" required></div>
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

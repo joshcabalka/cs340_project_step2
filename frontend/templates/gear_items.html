@@ -1,3 +1,74 @@
 <!-- Gear items page using this pattern: -->
  <!-- Title, browse table, add, update, delete, back to index nav -->
   <!-- Bind all fields and actions to the gear_items table -->
+   <!-- templates/employees.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <a href="{{ url_for('render_index_page') }}">Back to Index</a>
+      <h1>Employees</h1>
+    </div>
+
+    <div class="panel">
+      <h2>Browse</h2>
+      <table>
+        <tr>
+          <th>employee_id</th>
+          <th>first_name</th>
+          <th>last_name</th>
+          <th>role</th>
+          <th>is_active</th>
+        </tr>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.employee_id }}</td>
+          <td>{{ row.first_name }}</td>
+          <td>{{ row.last_name }}</td>
+          <td>{{ row.role }}</td>
+          <td>{{ row.is_active }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Add</h2>
+      <form method="post" action="/employees/add">
+        <div class="row"><label>first_name</label><input name="first_name" required></div>
+        <div class="row"><label>last_name</label><input name="last_name" required></div>
+        <div class="row"><label>role</label><input name="role" required></div>
+        <div class="row"><label>is_active (1 or 0)</label><input name="is_active" value="1" required></div>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Update</h2>
+      <form method="post" action="/employees/update">
+        <div class="row"><label>employee_id</label><input name="employee_id" required></div>
+        <div class="row"><label>first_name</label><input name="first_name" required></div>
+        <div class="row"><label>last_name</label><input name="last_name" required></div>
+        <div class="row"><label>role</label><input name="role" required></div>
+        <div class="row"><label>is_active (1 or 0)</label><input name="is_active" required></div>
+        <button type="submit">Update</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Delete</h2>
+      <form method="post" action="/employees/delete">
+        <div class="row"><label>employee_id</label><input name="employee_id" required></div>
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

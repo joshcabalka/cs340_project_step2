@@ -1,3 +1,79 @@
 <!-- Service ticket items page using this pattern: -->
  <!-- Title, browse table, add, update, delete, back to index nav -->
   <!-- Bind all fields and actions to the service_ticket_items table -->
+   <!-- templates/service_ticket_items.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Service Ticket Items</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <a href="{{ url_for('render_index_page') }}">Back to Index</a>
+      <h1>Service Ticket Items</h1>
+      <p>Composite primary key: service_ticket_id + gear_item_id</p>
+    </div>
+
+    <div class="panel">
+      <h2>Browse</h2>
+      <table>
+        <tr>
+          <th>service_ticket_id</th>
+          <th>gear_item_id</th>
+          <th>service_type</th>
+          <th>started_at</th>
+          <th>completed_at</th>
+        </tr>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.service_ticket_id }}</td>
+          <td>{{ row.gear_item_id }}</td>
+          <td>{{ row.service_type }}</td>
+          <td>{{ row.started_at }}</td>
+          <td>{{ row.completed_at }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>Add</h2>
+      <form method="post" action="/service_ticket_items/add">
+        <div class="row"><label>service_ticket_id</label><input name="service_ticket_id" required></div>
+        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
+        <div class="row"><label>service_type</label><input name="service_type" required></div>
+        <div class="row"><label>started_at</label><input name="started_at"></div>
+        <div class="row"><label>completed_at</label><input name="completed_at"></div>
+        <button type="submit">Add</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Update</h2>
+      <form method="post" action="/service_ticket_items/update">
+        <div class="row"><label>old_service_ticket_id</label><input name="old_service_ticket_id" required></div>
+        <div class="row"><label>old_gear_item_id</label><input name="old_gear_item_id" required></div>
+        <div class="row"><label>new service_ticket_id</label><input name="service_ticket_id" required></div>
+        <div class="row"><label>new gear_item_id</label><input name="gear_item_id" required></div>
+        <div class="row"><label>service_type</label><input name="service_type" required></div>
+        <div class="row"><label>started_at</label><input name="started_at"></div>
+        <div class="row"><label>completed_at</label><input name="completed_at"></div>
+        <button type="submit">Update</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2>Delete</h2>
+      <form method="post" action="/service_ticket_items/delete">
+        <div class="row"><label>service_ticket_id</label><input name="service_ticket_id" required></div>
+        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
+        <button type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

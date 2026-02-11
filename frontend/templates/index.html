@@ -1,1 +1,28 @@
 <!-- Main page for frontend with nav links to each entity page-->
+ <!-- templates/index.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ski Resort CRUD - Index</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <h1>Ski Resort Gear Rental System</h1>
+      <p>Select a page:</p>
+      <div class="nav">
+        <a href="{{ url_for('render_customers_page') }}">Customers</a>
+        <a href="{{ url_for('render_employees_page') }}">Employees</a>
+        <a href="{{ url_for('render_gear_items_page') }}">Gear Items</a>
+        <a href="{{ url_for('render_rental_orders_page') }}">Rental Orders</a>
+        <a href="{{ url_for('render_rental_order_items_page') }}">Rental Order Items</a>
+        <a href="{{ url_for('render_service_tickets_page') }}">Service Tickets</a>
+        <a href="{{ url_for('render_service_ticket_items_page') }}">Service Ticket Items</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
