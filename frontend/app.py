@@ -304,25 +304,81 @@ def delete_rental_order_record():
 # Browse rental_order_items records
 @app.route("/rental_order_items", methods=["GET"])
 def render_rental_order_items_page():
-    # SELECT rental_order_items
+    # Select all rental_order_items records
+    rental_order_item_rows = run_select(
+        "SELECT * FROM rental_order_items ORDER BY rental_order_id, gear_item_id"
+    )
     return render_template("rental_order_items.html", rows=rental_order_item_rows)
 
 # Add one rental_order_items record
 @app.route("/rental_order_items/add", methods=["POST"])
 def add_rental_order_item_record():
-    #TODO INSERT into rental_order_items
+    related_rental_order_id = request.form.get("rental_order_id")
+    related_gear_item_id = request.form.get("gear_item_id")
+    checked_out_at_value = request.form.get("checked_out_at", "").strip()
+    due_at_value = request.form.get("due_at", "").strip()
+    returned_at_value = request.form.get("returned_at", "").strip()
+
+    # Take the input data and add it to the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO rental_order_items
+        (rental_order_id, gear_item_id, checked_out_at, due_at, returned_at)
+        VALUES (%s, %s, %s, %s, %s)
+        """,
+        (related_rental_order_id, related_gear_item_id, checked_out_at_value, due_at_value, returned_at_value),
+    )
     return redirect(url_for("render_rental_order_items_page"))
 
 # Update one rental_order_items record by rental_order_item_id
+# This route has a composite PK: we use old keys in WHERE to find existing rows
+# Use new keys in SET in case key values are changed
 @app.route("/rental_order_items/update", methods=["POST"])
 def update_rental_order_item_record():
-    #TODO UPDATE rental_order_items
+    old_rental_order_id = request.form.get("old_rental_order_id")
+    old_gear_item_id = request.form.get("old_gear_item_id")
+    new_rental_order_id = request.form.get("rental_order_id")
+    new_gear_item_id = request.form.get("gear_item_id")
+    new_checked_out_at = request.form.get("checked_out_at", "").strip()
+    new_due_at = request.form.get("due at", "").strip()
+    new_returned_at = request.form.get("returned_at", "").strip() or None
+
+    # Take the input data and update the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE render_rental_order_items
+        SET rental_order_id = %s,
+            gear_item_id = %s,
+            checked_out_at = %s,
+            due_at = %s,
+            returned_at = %s,
+        WHERE rental_order_id = %s,
+            AND gear_item_id = %s
+        """,
+        (
+            new_rental_order_id,
+            new_gear_item_id,
+            new_checked_out_at,
+            new_due_at,
+            new_returned_at,
+            old_rental_order_id,
+            old_gear_item_id,
+        ),
+    )
     return redirect(url_for("render_rental_order_items_page"))
 
 # Delete one rental_order_items record by rental_order_item_id
+# This route has a composite PK rule - delete requires both key values
+# (rental_order_id AND gear_item_id)
 @app.route("/rental_order_items/delete", methods=["POST"])
 def delete_rental_order_item_record():
-    #TODO DELETE from rental_order_items
+    rental_order_id_to_delete = request.form.get("rental_order_id")
+    gear_item_id_to_delete = request.form.get("gear_item_id")
+
+    run_action(
+        "DELETE FROM rental_order_items WHERE rental_order_id = %s AND gear_item_id = %s," \
+        "(rental_order_id_to_delete, gear_item_to_delete)"
+    )
     return redirect(url_for("render_rental_order_items_page"))
 
 # SERVICE TICKETS ROUTES
