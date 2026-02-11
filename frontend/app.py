@@ -448,26 +448,80 @@ def render_service_ticket_items_page():
 # Add one service_ticket_items record
 @app.route("/service_ticket_items/add", methods=["POST"])
 def add_service_ticket_item_record():
-    related_service_ticket_id
+    related_service_ticket_id = request.form.get("service_ticket_id")
+    related_gear_item_id = request.form.get("gear_item_id")
+    service_type_value = request.form.get("service_type", "").strip()
+    started_at_value = request.form.get("started_at", "").strip() or None
+    completed_at_value = request.form.get("completed_at", "").strip() or None
+
+    # Take the input data and add it to the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO service_ticket_items
+        (service_ticket_id, gear_item_id, service_type, started_at, completed_at)
+        VALUES (%s, %s, %s, %s, %s)
+        """,
+        (related_service_ticket_id, related_gear_item_id, service_type_value, started_at_value, completed_at_value),
+    )
     return redirect(url_for("render_service_ticket_items_page"))
 
 # Update one service_ticket_items record by service_ticket_item_id
+# This route uses a composite PK: Use old keys in WHERE to find existing row
+# Use new keys in SET in case key values are changed
 @app.route("/service_ticket_items/update", methods=["POST"])
 def update_service_ticket_item_record():
-    #TODO UPDATE service_ticket_items
+    old_service_ticket_id = request.form.get("old_service_ticket_id")
+    old_gear_item_id = request.form.get("old_gear_item_id")
+    new_service_ticket_id = request.form.get("service_ticket_id")
+    new_gear_item_id = request.form.get("gear_item_id")
+    new_service_type = request.form.get("service_type", "").strip()
+    new_started_at = request.form.get("started_at", "").strip() or None
+    new_completed_at = request.form.get("completed_at", "").strip() or None
+
+    # Take the input data and update the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE service_ticket_items
+        SET service_ticket_id = %s,
+            gear_item_id = %s,
+            service_type = %s,
+            started_at = %s,
+            completed_at = %s,
+        WHERE service_ticket_id = %s,
+            AND gear_item_id = %s
+        """,
+        (
+            new_service_ticket_id,
+            new_gear_item_id,
+            new_service_type,
+            new_started_at,
+            new_completed_at,
+            old_service_ticket_id,
+            old_gear_item_id,
+        ),
+    )
     return redirect(url_for("render_service_ticket_items_page"))
 
 # Delete one service_ticket_items record by service_ticket_item_id
+# This route uses a composite PK: Delete requires both key values
 @app.route("/service_ticket_items/delete", methods=["POST"])
 def delete_service_ticket_item_record():
-    #TODO DELETE from service_ticket_items
+    service_ticket_id_to_delete = request.form.get("service_ticket_id")
+    gear_item_id_to_delete = request.form.get("gear_item_id")
+
+    # Take the input key values and delete the service ticket item records
+    run_action(
+        "DELETE FROM service_ticket_items WHERE service_ticket_id = %s AND gear_item_id = %s",
+        (service_ticket_id_to_delete, gear_item_id_to_delete),
+    )
     return redirect(url_for("render_service_ticket_items_page"))
 
 
 # APP START
 if __name__ == "__main__":
     # Debug true while developing
-    app.run(host="0.0.0.0", port=int(os.getenv("APP_PORT", "8317")), debug=True)
+    app_port = int(os.getenv("APP_PORT", "40404"))
+    app.run(host="0.0.0.0", port=app_port, debug=True)
 
 
 
