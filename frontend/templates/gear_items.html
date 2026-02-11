@@ -1,39 +1,47 @@
-<!-- Gear items page using this pattern: -->
+<!-- Rental orders page using this pattern: -->
  <!-- Title, browse table, add, update, delete, back to index nav -->
-  <!-- Bind all fields and actions to the gear_items table -->
-   <!-- templates/employees.html -->
+  <!-- Bind all fields and actions to the rental_orders table -->
+   <!-- templates/gear_items.html -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Employees</title>
+  <title>Gear Items</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <div class="container">
     <div class="panel">
       <a href="{{ url_for('render_index_page') }}">Back to Index</a>
-      <h1>Employees</h1>
+      <h1>Gear Items</h1>
     </div>
 
     <div class="panel">
       <h2>Browse</h2>
       <table>
         <tr>
-          <th>employee_id</th>
-          <th>first_name</th>
-          <th>last_name</th>
-          <th>role</th>
-          <th>is_active</th>
+          <th>gear_item_id</th>
+          <th>category</th>
+          <th>brand</th>
+          <th>model</th>
+          <th>serial_number</th>
+          <th>size</th>
+          <th>condition_grade</th>
+          <th>status</th>
+          <th>acquired_at</th>
         </tr>
         {% for row in rows %}
         <tr>
-          <td>{{ row.employee_id }}</td>
-          <td>{{ row.first_name }}</td>
-          <td>{{ row.last_name }}</td>
-          <td>{{ row.role }}</td>
-          <td>{{ row.is_active }}</td>
+          <td>{{ row.gear_item_id }}</td>
+          <td>{{ row.category }}</td>
+          <td>{{ row.brand }}</td>
+          <td>{{ row.model }}</td>
+          <td>{{ row.serial_number }}</td>
+          <td>{{ row.size }}</td>
+          <td>{{ row.condition_grade }}</td>
+          <td>{{ row.status }}</td>
+          <td>{{ row.acquired_at }}</td>
         </tr>
         {% endfor %}
       </table>
@@ -41,31 +49,117 @@
 
     <div class="panel">
       <h2>Add</h2>
-      <form method="post" action="/employees/add">
-        <div class="row"><label>first_name</label><input name="first_name" required></div>
-        <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>role</label><input name="role" required></div>
-        <div class="row"><label>is_active (1 or 0)</label><input name="is_active" value="1" required></div>
+      <form method="post" action="/gear_items/add">
+        <div class="row">
+          <label>category</label>
+          <select name="category" required>
+            <option value="">-- Select Category --</option>
+            <option value="snowboard">Snowboard</option>
+            <option value="boots">Boots</option>
+            <option value="helmet">Helmet</option>
+            <option value="skis">Skis</option>
+            <option value="poles">Poles</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="row"><label>brand</label><input name="brand" required></div>
+        <div class="row"><label>model</label><input name="model" required></div>
+        <div class="row"><label>serial_number</label><input name="serial_number" required></div>
+        <div class="row"><label>size</label><input name="size" required></div>
+        <div class="row">
+          <label>condition_grade</label>
+          <select name="condition_grade" required>
+            <option value="">-- Select Condition --</option>
+            <option value="new">New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>status</label>
+          <select name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="available">Available</option>
+            <option value="rented">Rented</option>
+            <option value="in_service">In Service</option>
+            <option value="retired">Retired</option>
+          </select>
+        </div>
+        <div class="row"><label>acquired_at</label><input type="datetime-local" name="acquired_at" required></div>
         <button type="submit">Add</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Update</h2>
-      <form method="post" action="/employees/update">
-        <div class="row"><label>employee_id</label><input name="employee_id" required></div>
-        <div class="row"><label>first_name</label><input name="first_name" required></div>
-        <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>role</label><input name="role" required></div>
-        <div class="row"><label>is_active (1 or 0)</label><input name="is_active" required></div>
+      <form method="post" action="/gear_items/update">
+        <div class="row">
+          <label>gear_item_id</label>
+          <select name="gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in rows %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>category</label>
+          <select name="category" required>
+            <option value="">-- Select Category --</option>
+            <option value="snowboard">Snowboard</option>
+            <option value="boots">Boots</option>
+            <option value="helmet">Helmet</option>
+            <option value="skis">Skis</option>
+            <option value="poles">Poles</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="row"><label>brand</label><input name="brand" required></div>
+        <div class="row"><label>model</label><input name="model" required></div>
+        <div class="row"><label>serial_number</label><input name="serial_number" required></div>
+        <div class="row"><label>size</label><input name="size" required></div>
+        <div class="row">
+          <label>condition_grade</label>
+          <select name="condition_grade" required>
+            <option value="">-- Select Condition --</option>
+            <option value="new">New</option>
+            <option value="good">Good</option>
+            <option value="fair">Fair</option>
+            <option value="poor">Poor</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>status</label>
+          <select name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="available">Available</option>
+            <option value="rented">Rented</option>
+            <option value="in_service">In Service</option>
+            <option value="retired">Retired</option>
+          </select>
+        </div>
+        <div class="row"><label>acquired_at</label><input type="datetime-local" name="acquired_at" required></div>
         <button type="submit">Update</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Delete</h2>
-      <form method="post" action="/employees/delete">
-        <div class="row"><label>employee_id</label><input name="employee_id" required></div>
+      <form method="post" action="/gear_items/delete">
+        <div class="row">
+          <label>gear_item_id</label>
+          <select name="gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in rows %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <button type="submit">Delete</button>
       </form>
     </div>

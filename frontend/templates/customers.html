@@ -51,7 +51,17 @@
     <div class="panel">
       <h2>Update</h2>
       <form method="post" action="/customers/update">
-        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+        <div class="row">
+          <label>customer_id</label>
+          <select name="customer_id" required>
+            <option value="">-- Select Customer --</option>
+              {% for customer in rows %}
+            <option value="{{ customer.customer_id }}">
+              {{ customer.customer_id }} - {{ customer.first_name }} {{ customer.last_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <div class="row"><label>first_name</label><input name="first_name" required></div>
         <div class="row"><label>last_name</label><input name="last_name" required></div>
         <div class="row"><label>email</label><input name="email"></div>
@@ -63,10 +73,21 @@
     <div class="panel">
       <h2>Delete</h2>
       <form method="post" action="/customers/delete">
-        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+        <div class="row">
+          <label>customer_id</label>
+          <select name="customer_id" required>
+            <option value="">-- Select Customer --</option>
+            {% for customer in rows %}
+            <option value="{{ customer.customer_id }}">
+              {{ customer.customer_id }} - {{ customer.first_name }} {{ customer.last_name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <button type="submit">Delete</button>
       </form>
     </div>
+
   </div>
 </body>
 </html>

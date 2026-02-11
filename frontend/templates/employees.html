@@ -21,19 +21,19 @@
       <h2>Browse</h2>
       <table>
         <tr>
-          <th>customer_id</th>
+          <th>employee_id</th>
           <th>first_name</th>
           <th>last_name</th>
-          <th>email</th>
-          <th>phone</th>
+          <th>role</th>
+          <th>is_active</th>
         </tr>
         {% for row in rows %}
         <tr>
-          <td>{{ row.customer_id }}</td>
+          <td>{{ row.employee_id }}</td>
           <td>{{ row.first_name }}</td>
           <td>{{ row.last_name }}</td>
-          <td>{{ row.email }}</td>
-          <td>{{ row.phone }}</td>
+          <td>{{ row.role }}</td>
+          <td>{{ row.is_active }}</td>
         </tr>
         {% endfor %}
       </table>
@@ -41,31 +41,63 @@
 
     <div class="panel">
       <h2>Add</h2>
-      <form method="post" action="/customers/add">
+      <form method="post" action="/employees/add">
         <div class="row"><label>first_name</label><input name="first_name" required></div>
         <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>email</label><input name="email"></div>
-        <div class="row"><label>phone</label><input name="phone"></div>
+        <div class="row"><label>role</label><input name="role" required></div>
+        <div class="row">
+          <label>is_active</label>
+          <select name="is_active" required>
+            <option value="1">Active (1)</option>
+            <option value="0">Inactive (0)</option>
+          </select>
+        </div>
         <button type="submit">Add</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Update</h2>
-      <form method="post" action="/customers/update">
-        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+      <form method="post" action="/employees/update">
+        <div class="row">
+          <label>employee_id</label>
+          <select name="employee_id" required>
+            <option value="">-- Select Employee --</option>
+            {% for employee in rows %}
+            <option value="{{ employee.employee_id }}">
+              {{ employee.employee_id }} - {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <div class="row"><label>first_name</label><input name="first_name" required></div>
         <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>email</label><input name="email"></div>
-        <div class="row"><label>phone</label><input name="phone"></div>
+        <div class="row"><label>role</label><input name="role" required></div>
+        <div class="row">
+          <label>is_active</label>
+          <select name="is_active" required>
+            <option value="1">Active (1)</option>
+            <option value="0">Inactive (0)</option>
+          </select>
+        </div>
         <button type="submit">Update</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Delete</h2>
-      <form method="post" action="/customers/delete">
-        <div class="row"><label>customer_id</label><input name="customer_id" required></div>
+      <form method="post" action="/employees/delete">
+        <div class="row">
+          <label>employee_id</label>
+          <select name="employee_id" required>
+            <option value="">-- Select Employee --</option>
+            {% for employee in rows %}
+            <option value="{{ employee.employee_id }}">
+              {{ employee.employee_id }} - {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <button type="submit">Delete</button>
       </form>
     </div>

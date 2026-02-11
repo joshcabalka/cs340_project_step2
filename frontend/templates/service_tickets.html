@@ -7,34 +7,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rental Order Items</title>
+  <title>Service Tickets</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
   <div class="container">
     <div class="panel">
       <a href="{{ url_for('render_index_page') }}">Back to Index</a>
-      <h1>Rental Order Items</h1>
-      <p>Composite primary key: rental_order_id + gear_item_id</p>
+      <h1>Service Tickets</h1>
     </div>
 
     <div class="panel">
       <h2>Browse</h2>
       <table>
         <tr>
-          <th>rental_order_id</th>
-          <th>gear_item_id</th>
-          <th>checked_out_at</th>
-          <th>due_at</th>
-          <th>returned_at</th>
+          <th>service_ticket_id</th>
+          <th>opened_by_employee_id</th>
+          <th>status</th>
+          <th>created_at</th>
+
         </tr>
         {% for row in rows %}
         <tr>
-          <td>{{ row.rental_order_id }}</td>
-          <td>{{ row.gear_item_id }}</td>
-          <td>{{ row.checked_out_at }}</td>
-          <td>{{ row.due_at }}</td>
-          <td>{{ row.returned_at }}</td>
+          <td>{{ row.service_ticket_id }}</td>
+          <td>{{ row.opened_by_employee_id }}</td>
+          <td>{{ row.status }}</td>
+          <td>{{ row.created_at }}</td>
         </tr>
         {% endfor %}
       </table>
@@ -42,35 +40,87 @@
 
     <div class="panel">
       <h2>Add</h2>
-      <form method="post" action="/rental_order_items/add">
-        <div class="row"><label>rental_order_id</label><input name="rental_order_id" required></div>
-        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
-        <div class="row"><label>checked_out_at</label><input name="checked_out_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
-        <div class="row"><label>due_at</label><input name="due_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
-        <div class="row"><label>returned_at</label><input name="returned_at"></div>
+      <form method="post" action="/service_tickets/add">
+        <div class="row">
+          <label>opened_by_employee_id</label>
+          <select name="opened_by_employee_id" required>
+            <option value="">-- Select Employee --</option>
+            {% for employee in employees %}
+            <option value="{{ employee.employee_id }}">
+              {{ employee.employee_id }} - {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>status</label>
+          <select name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="row"><label>created_at</label><input type="datetime-local" name="created_at" required></div>
         <button type="submit">Add</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Update</h2>
-      <form method="post" action="/rental_order_items/update">
-        <div class="row"><label>old_rental_order_id</label><input name="old_rental_order_id" required></div>
-        <div class="row"><label>old_gear_item_id</label><input name="old_gear_item_id" required></div>
-        <div class="row"><label>new rental_order_id</label><input name="rental_order_id" required></div>
-        <div class="row"><label>new gear_item_id</label><input name="gear_item_id" required></div>
-        <div class="row"><label>checked_out_at</label><input name="checked_out_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
-        <div class="row"><label>due_at</label><input name="due_at" placeholder="YYYY-MM-DD HH:MM:SS" required></div>
-        <div class="row"><label>returned_at</label><input name="returned_at"></div>
+      <form method="post" action="/service_tickets/update">
+        <div class="row">
+          <label>service_ticket_id</label>
+          <select name="service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in rows %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>opened_by_employee_id</label>
+          <select name="opened_by_employee_id" required>
+            <option value="">-- Select Employee --</option>
+            {% for employee in employees %}
+            <option value="{{ employee.employee_id }}">
+              {{ employee.employee_id }} - {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>status</label>
+          <select name="status" required>
+            <option value="">-- Select Status --</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="row"><label>created_at</label><input type="datetime-local" name="created_at" required></div>
         <button type="submit">Update</button>
       </form>
     </div>
 
     <div class="panel">
       <h2>Delete</h2>
-      <form method="post" action="/rental_order_items/delete">
-        <div class="row"><label>rental_order_id</label><input name="rental_order_id" required></div>
-        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
+      <form method="post" action="/service_tickets/delete">
+        <div class="row">
+          <label>service_ticket_id</label>
+          <select name="service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in rows %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <button type="submit">Delete</button>
       </form>
     </div>

@@ -43,11 +43,42 @@
     <div class="panel">
       <h2>Add</h2>
       <form method="post" action="/service_ticket_items/add">
-        <div class="row"><label>service_ticket_id</label><input name="service_ticket_id" required></div>
-        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
-        <div class="row"><label>service_type</label><input name="service_type" required></div>
-        <div class="row"><label>started_at</label><input name="started_at"></div>
-        <div class="row"><label>completed_at</label><input name="completed_at"></div>
+        <div class="row">
+          <label>service_ticket_id</label>
+          <select name="service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in service_tickets %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>gear_item_id</label>
+          <select name="gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in gear_items %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>service_type</label>
+          <select name="service_type" required>
+            <option value="">-- Select Service Type --</option>
+            <option value="inspect">Inspect</option>
+            <option value="repair">Repair</option>
+            <option value="wax">Wax</option>
+            <option value="tune">Tune</option>
+            <option value="sharpen">Sharpen</option>
+            <option value="replace">Replace</option>
+          </select>
+        </div>
+        <div class="row"><label>started_at</label><input type="datetime-local" name="started_at"></div>
+        <div class="row"><label>completed_at</label><input type="datetime-local" name="completed_at"></div>
         <button type="submit">Add</button>
       </form>
     </div>
@@ -55,13 +86,67 @@
     <div class="panel">
       <h2>Update</h2>
       <form method="post" action="/service_ticket_items/update">
-        <div class="row"><label>old_service_ticket_id</label><input name="old_service_ticket_id" required></div>
-        <div class="row"><label>old_gear_item_id</label><input name="old_gear_item_id" required></div>
-        <div class="row"><label>new service_ticket_id</label><input name="service_ticket_id" required></div>
-        <div class="row"><label>new gear_item_id</label><input name="gear_item_id" required></div>
-        <div class="row"><label>service_type</label><input name="service_type" required></div>
-        <div class="row"><label>started_at</label><input name="started_at"></div>
-        <div class="row"><label>completed_at</label><input name="completed_at"></div>
+        <h3>Old Keys (to find record)</h3>
+        <div class="row">
+          <label>old_service_ticket_id</label>
+          <select name="old_service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in service_tickets %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>old_gear_item_id</label>
+          <select name="old_gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in gear_items %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <h3>New Values</h3>
+        <div class="row">
+          <label>service_ticket_id</label>
+          <select name="service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in service_tickets %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>gear_item_id</label>
+          <select name="gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in gear_items %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>service_type</label>
+          <select name="service_type" required>
+            <option value="">-- Select Service Type --</option>
+            <option value="inspect">Inspect</option>
+            <option value="repair">Repair</option>
+            <option value="wax">Wax</option>
+            <option value="tune">Tune</option>
+            <option value="sharpen">Sharpen</option>
+            <option value="replace">Replace</option>
+          </select>
+        </div>
+        <div class="row"><label>started_at</label><input type="datetime-local" name="started_at"></div>
+        <div class="row"><label>completed_at</label><input type="datetime-local" name="completed_at"></div>
         <button type="submit">Update</button>
       </form>
     </div>
@@ -69,8 +154,28 @@
     <div class="panel">
       <h2>Delete</h2>
       <form method="post" action="/service_ticket_items/delete">
-        <div class="row"><label>service_ticket_id</label><input name="service_ticket_id" required></div>
-        <div class="row"><label>gear_item_id</label><input name="gear_item_id" required></div>
+        <div class="row">
+          <label>service_ticket_id</label>
+          <select name="service_ticket_id" required>
+            <option value="">-- Select Service Ticket --</option>
+            {% for ticket in service_tickets %}
+            <option value="{{ ticket.service_ticket_id }}">
+              Ticket {{ ticket.service_ticket_id }} - {{ ticket.status }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="row">
+          <label>gear_item_id</label>
+          <select name="gear_item_id" required>
+            <option value="">-- Select Gear Item --</option>
+            {% for item in gear_items %}
+            <option value="{{ item.gear_item_id }}">
+              {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
         <button type="submit">Delete</button>
       </form>
     </div>

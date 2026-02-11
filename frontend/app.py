@@ -254,7 +254,16 @@ def delete_gear_item_record():
 def render_rental_orders_page():
     # Select all rental orders
     rental_order_rows = run_select("SELECT * FROM rental_orders ORDER BY rental_order_id")
-    return render_template("rental_orders.html", rows=rental_order_rows)
+
+    # Fetch customers for dropdown
+    customers = run_select("SELECT customer_id, first_name, last_name FROM customers ORDER BY customer_id")
+
+    # Fetch employees for dropdown
+    employees = run_select("SELECT employee_id, first_name, last_name, role FROM employees ORDER BY employee_id")
+
+    return render_template("rental_orders.html",
+                           rows=rental_order_rows, customers=customers,
+                           employees=employees)
 
 # Add one rental_orders record
 @app.route("/rental_orders/add", methods=["POST"])
@@ -296,7 +305,9 @@ def update_rental_order_record():
 def delete_rental_order_record():
     rental_order_id_to_delete = request.form.get("rental_order_id")
     # Take the input data and delete that specific rental order 
-    run_action("DELETE FROM rental_orders WHERE rental_order_id = %s", (rental_order_id_to_delete,))
+    run_action("DELETE FROM rental_orders WHERE rental_order_id = %s",
+               (rental_order_id_to_delete,))
+
     return redirect(url_for("render_rental_orders_page"))
 
 # RENTAL ORDER ITEMS ROUTES
@@ -308,7 +319,16 @@ def render_rental_order_items_page():
     rental_order_item_rows = run_select(
         "SELECT * FROM rental_order_items ORDER BY rental_order_id, gear_item_id"
     )
-    return render_template("rental_order_items.html", rows=rental_order_item_rows)
+    # Fetch rental_orders for dropdown
+    rental_orders = run_select("SELECT rental_order_id, customer_id FROM rental_orders ORDER BY rental_order_id DESC")
+    # Fetch gear_items for dropdown
+    gear_items = run_select("SELECT gear_item_id, category, brand, model FROM gear_items ORDER BY gear_item_id")
+
+    return render_template("rental_order_items.html",
+                           rows=rental_order_item_rows,
+                           rental_orders=rental_orders,
+                           gear_items=gear_items)
+
 
 # Add one rental_order_items record
 @app.route("/rental_order_items/add", methods=["POST"])
@@ -326,7 +346,11 @@ def add_rental_order_item_record():
         (rental_order_id, gear_item_id, checked_out_at, due_at, returned_at)
         VALUES (%s, %s, %s, %s, %s)
         """,
-        (related_rental_order_id, related_gear_item_id, checked_out_at_value, due_at_value, returned_at_value),
+        (related_rental_order_id,
+         related_gear_item_id,
+         checked_out_at_value,
+         due_at_value,
+         returned_at_value),
     )
     return redirect(url_for("render_rental_order_items_page"))
 
@@ -388,7 +412,13 @@ def delete_rental_order_item_record():
 def render_service_tickets_page():
     # Select all service ticket records
     service_ticket_rows = run_select("SELECT * FROM service_tickets ORDER BY service_ticket_id")
-    return render_template("service_tickets.html", rows=service_ticket_rows)
+
+    # Fetch employees for dropdown
+    employees = run_select(
+        "SELECT employee_id, first_name, last_name, role FROM employees ORDER BY employee_id"
+    )
+
+    return render_template("service_tickets.html", rows=service_ticket_rows, employees=employees)
 
 # Add one service_tickets record
 @app.route("/service_tickets/add", methods=["POST"])
@@ -431,7 +461,8 @@ def update_service_ticket_record():
 def delete_service_ticket_record():
     service_ticket_id_to_delete = request.form.get("service_ticket_id")
     # Take the input and delete the specified record
-    run_action("DELETE FROM service_tickets WHERE service_ticket_id = %s", (service_ticket_id_to_delete,))
+    run_action("DELETE FROM service_tickets WHERE service_ticket_id = %s",
+               (service_ticket_id_to_delete,))
     return redirect(url_for("render_service_tickets_page"))
 
 # SERVICE TICKET ITEMS ROUTES
@@ -443,7 +474,23 @@ def render_service_ticket_items_page():
     service_ticket_item_rows = run_select(
         "SELECT * FROM service_ticket_items ORDER BY service_ticket_id, gear_item_id"
     )
-    return render_template("service_ticket_items.html", rows=service_ticket_item_rows)
+
+    # Fetch service_tickets for dropdown
+    service_tickets = run_select(
+        "SELECT service_ticket_id, status FROM service_tickets ORDER BY service_ticket_id DESC"
+    )
+
+    # Fetch gear_items for dropdown
+    gear_items = run_select(
+        "SELECT gear_item_id, category, brand, model FROM gear_items ORDER BY gear_item_id"
+    )
+
+    return render_template(
+        "service_ticket_items.html",
+        rows=service_ticket_item_rows,
+        service_tickets=service_tickets,
+        gear_items=gear_items
+    )
 
 # Add one service_ticket_items record
 @app.route("/service_ticket_items/add", methods=["POST"])
@@ -461,7 +508,10 @@ def add_service_ticket_item_record():
         (service_ticket_id, gear_item_id, service_type, started_at, completed_at)
         VALUES (%s, %s, %s, %s, %s)
         """,
-        (related_service_ticket_id, related_gear_item_id, service_type_value, started_at_value, completed_at_value),
+        (related_service_ticket_id,
+         related_gear_item_id,
+         service_type_value,
+         started_at_value, completed_at_value),
     )
     return redirect(url_for("render_service_ticket_items_page"))
 
