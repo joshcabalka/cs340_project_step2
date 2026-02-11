@@ -278,7 +278,7 @@ def update_rental_order_record():
     target_rental_order_id = request.form.get("rental_order_id")
     updated_customer_id = request.form.get("customer_id")
     updated_created_by_employee_id = request.form.get("created_by_employee_id")
-    updated_created_at = request.form.get("created_at").strip()
+    updated_created_at = request.form.get("created_at", "").strip()
 
     # Take the input data and update the database using parameterized SQL queries
     run_action(
@@ -340,19 +340,19 @@ def update_rental_order_item_record():
     new_rental_order_id = request.form.get("rental_order_id")
     new_gear_item_id = request.form.get("gear_item_id")
     new_checked_out_at = request.form.get("checked_out_at", "").strip()
-    new_due_at = request.form.get("due at", "").strip()
+    new_due_at = request.form.get("due_at", "").strip()
     new_returned_at = request.form.get("returned_at", "").strip() or None
 
     # Take the input data and update the database using parameterized SQL queries
     run_action(
         """
-        UPDATE render_rental_order_items
+        UPDATE rental_order_items
         SET rental_order_id = %s,
             gear_item_id = %s,
             checked_out_at = %s,
             due_at = %s,
-            returned_at = %s,
-        WHERE rental_order_id = %s,
+            returned_at = %s
+        WHERE rental_order_id = %s
             AND gear_item_id = %s
         """,
         (
@@ -376,8 +376,8 @@ def delete_rental_order_item_record():
     gear_item_id_to_delete = request.form.get("gear_item_id")
 
     run_action(
-        "DELETE FROM rental_order_items WHERE rental_order_id = %s AND gear_item_id = %s," \
-        "(rental_order_id_to_delete, gear_item_to_delete)"
+        "DELETE FROM rental_order_items WHERE rental_order_id = %s AND gear_item_id = %s",
+        (rental_order_id_to_delete, gear_item_id_to_delete)
     )
     return redirect(url_for("render_rental_order_items_page"))
 
@@ -486,8 +486,8 @@ def update_service_ticket_item_record():
             gear_item_id = %s,
             service_type = %s,
             started_at = %s,
-            completed_at = %s,
-        WHERE service_ticket_id = %s,
+            completed_at = %s
+        WHERE service_ticket_id = %s
             AND gear_item_id = %s
         """,
         (
