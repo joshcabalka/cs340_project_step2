@@ -169,25 +169,82 @@ def delete_employee_record():
 # Browse gear_items records
 @app.route("/gear_items", methods=["GET"])
 def render_gear_items_page():
-    #TODO SELECT gear_items
+    gear_item_rows = run_select("SELECT * FROM gear_items ORDER BY gear_item_id")
     return render_template("gear_items.html", rows=gear_item_rows)
 
 # Add one gear_items record
 @app.route("/gear_items/add", methods=["POST"])
 def add_gear_item_record():
-    #TODO INSERT into gear_items
+    gear_item_category = request.form.get("category", "").strip()
+    gear_item_brand = request.form.get("brand", "").strip()
+    gear_item_model = request.form.get("model", "").strip()
+    gear_item_serial_number = request.form.get("serial_number", "").strip()
+    gear_item_size = request.form.get("size", "").strip()
+    gear_item_condition_grade = request.form.get("condition_grade", "").strip()
+    gear_item_status = request.form.get("status", "").strip()
+    gear_item_acquired_at = request.form.get("acquired_at", "").strip()
+
+    # Take the input data and add it to the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO gear_items
+        (category, brand, model, serial_number, size, condition_grade, status, acquired_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (
+            gear_item_category,
+            gear_item_brand,
+            gear_item_model,
+            gear_item_serial_number,
+            gear_item_size,
+            gear_item_condition_grade,
+            gear_item_status,
+            gear_item_acquired_at,
+        ),
+    )
     return redirect(url_for("render_gear_items_page"))
 
 # Update one gear_items record by gear_item_id
 @app.route("/gear_items/update", methods=["POST"])
 def update_gear_item_record():
-    #TODO UPDATE gear_items
+    target_gear_item_id = request.form.get("gear_item_id")
+    updated_category = request.form.get("category", "").strip()
+    updated_brand = request.form.get("brand", "").strip()
+    updated_model = request.form.get("model", "").strip()
+    updated_serial_number = request.form.get("serial_number", "").strip()
+    updated_size = request.form.get("size", "").strip()
+    updated_condition_grade = request.form.get("condition_grade", "").strip()
+    updated_status = request.form.get("status", "").strip()
+    updated_acquired_at = request.form.get("acquired_at", "").strip()
+
+    # Take the input data and update the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE gear_items
+        SET category = %s, brand = %s, model = %s, serial_number = %s, size = %s,
+        condition_grade = %s, status = %s, acquired_at = %s
+        WHERE gear_item_id = %s
+        """,
+        (
+            updated_category,
+            updated_brand,
+            updated_model,
+            updated_serial_number,
+            updated_size,
+            updated_condition_grade,
+            updated_status,
+            updated_acquired_at,
+            target_gear_item_id,
+        ),
+    )
     return redirect(url_for("render_gear_items_page"))
 
 # Delete one gear_items record by gear_item_id
 @app.route("/gear_items/delete", methods=["POST"])
 def delete_gear_item_record():
-    #TODO DELETE from gear_items
+    gear_item_id_to_delete = request.form.get("gear_item_id")
+    # Take the input id and delete that specific item record
+    run_action("DELETE FROM gear_items WHERE gear_item_id = %s", (gear_item_id_to_delete,))
     return redirect(url_for("render_gear_items_page"))
 
 # RENTAL ORDERS ROUTES
