@@ -90,7 +90,7 @@ def update_customer_record():
     updated_email = request.form.get("email", "").strip() or None
     updated_phone = request.form.get("phone")
 
-    # Take the input data dn insert it into the database using parameterized SQL queries
+    # Take the input data and insert it into the database using parameterized SQL queries
     run_action(
         """
         UPDATE customers
@@ -113,25 +113,55 @@ def delete_customer_record():
 # Browse employee records
 @app.route("/employees", methods=["GET"])
 def render_employees_page():
-    #TODO Execute SELECT
+    employee_rows = run_select("SELECT * FROM employees ORDER BY employee_id")
     return render_template("employees.html", rows=employee_rows)
 
 # Add one employee record
 @app.route("/employees/add", methods=["POST"])
 def add_employee_record():
-    #TODO INSERT into employees
+    employee_first_name = request.form.get("first_name", "").strip()
+    employee_last_name = request.form.get("last_name", "").strip()
+    employee_role = request.form.get("role", "").strip()
+    employee_is_active_text = request.form.get("is_active", "1")
+    employee_is_active = 1 if employee_is_active_text in ("1", "true", "True", "on", "yes") else 0
+
+    # Take the input data and insert it into the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO employees (first_name, last_name, role, is_active)
+        VALUES (%s, %s, %s, %s)
+        """,
+        (employee_first_name, employee_last_name, employee_role, employee_is_active),
+    )
     return redirect(url_for("render_employees_page"))
 
 # Update one employee record by employee_id
 @app.route("/employees/update", methods=["POST"])
 def update_employee_record():
-    #TODO UPDATE employees
+    target_employee_id = request.form.get("employee_id")
+    updated_first_name = request.form.get("first_name", "").strip()
+    updated_last_name = request.form.get("last_name", "").strip()
+    updated_role = request.form.get("role", "").strip()
+    updated_is_active_text = request.form.get("is_active", "1")
+    updated_is_active = 1 if updated_is_active_text in ("1", "true", "True", "on", "yes") else 0
+
+    # Take the input data and insert it into the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE employees
+        SET first_name = %s, last_name = %s, role = %s, is_active = %s
+        WHERE employee_id = %s
+        """,
+        (updated_first_name, updated_last_name, updated_role, updated_is_active, target_employee_id),
+    )
     return redirect(url_for("render_employees_page"))
 
 # Delete one employee record by employee_id
 @app.route("/employees/delete", methods=["POST"])
 def delete_employee_record():
-    #TODO DELETE from employees
+    employee_id_to_delete = request.form.get("employee_id")
+    # Take the input data and delete that specific employee
+    run_action("DELETE FROM employees WHERE employee_id = %s", (employee_id_to_delete,))
     return redirect(url_for("render_employees_page"))
 
 # GEAR ITEMS ROUTES
