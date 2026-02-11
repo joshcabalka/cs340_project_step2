@@ -59,25 +59,53 @@ def render_index_page():
 # Browse customer records
 @app.route("/customers", methods=["GET"])
 def render_customers_page():
-    # TODO query customer table
-    return render_template()
+    customer_rows = run_select("SELECT * FROM customers ORDER BY customer_id")
+    return render_template("customers.html", rows=customer_rows)
 
 # Add one customer record from submitted form
 @app.route("/customers/add", methods=["POST"])
 def add_customer_record():
-    #TODO execute INSERT
+    customer_first_name = request.form.get("first_name", "").strip()
+    customer_last_name = request.form.get("last_name", "").strip()
+    customer_email = request.form.get("email", "").strip() or None
+    customer_phone = request.form.get("phone", "").strip() or None
+
+    # Take the data that was input and insert it into the database
+    # Uses parameterized queries
+    run_action(
+        """
+        INSERT INTO customers (first_name, last_name, email, phone)
+        VALUES (%s, %s, %s, %s)
+        """,
+        (customer_first_name, customer_last_name, customer_email, customer_phone),
+    )
     return redirect(url_for("render_customers_page"))
 
 # Update one customer record by customer_id
 @app.route("/customers/update", methods=["POST"])
 def update_customer_record():
-    #TODO Execute UPDATE
+    target_customer_id = request.form.get("customer_id")
+    updated_first_name = request.form.get("first_name", "").strip()
+    updated_last_name = request.form.get("last_name", "").strip()
+    updated_email = request.form.get("email", "").strip() or None
+    updated_phone = request.form.get("phone")
+
+    # Take the input data dn insert it into the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE customers
+        SET first_name = %s, last_name = %s, email = %s, phone = %s
+        WHERE customer_id = %s
+        """,
+        (updated_first_name, updated_last_name, updated_email, updated_phone, target_customer_id),
+    )
     return redirect(url_for("render_customers_page"))
 
 # Delete one customer record by customer_id
 @app.route("/customers/delete", methods=["POST"])
 def delete_customer_record():
-    #TODO execute DELETE
+    customer_id_to_delete = request.form.get("customer_id")
+    run_action("DELETE FROM customers WHERE customer_id = %s", (customer_id_to_delete,))
     return redirect(url_for("render_customers_page"))
 
 #EMPLOYEE ROUTES
