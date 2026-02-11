@@ -9,16 +9,20 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 # Setup Flask app
 app = Flask(__name__)
 
 # Server connection details TODO: update info
 DB_CONFIG = {
-    "host": "classmysql.engr.oregonstate.edu",
-    "user": "cs340_cabalkaj",
-    "password": os.getenv("DB_PASSWORD", "CHANGE_ME"),
-    "database": "cs340_cabalkaj"
+    "host": os.getenv("DB_HOST"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "database": os.getenv("DB_NAME"),
+    "port": int(os.getenv("DB_PORT", "3306"))
 }
 
 # Create and return a new MySQL connection object
@@ -28,13 +32,22 @@ def open_database_connection():
 
 # Execute a SELECT  query and return rows as dictionaries
 def run_select(sql_query_text, sql_query_parameters=()):
-    # TODO implement SELECT execution pattern
-    return []
+    database_connection = open_database_connection()
+    dictionary_cursor = database_connection.cursor(dictionary=True)
+    dictionary_cursor.execute(sql_query_text, sql_query_parameters)
+    selected_rows = dictionary_cursor.fetchall()
+    dictionary_cursor.close()
+    database_connection.close()
+    return selected_rows
 
 # Run INSERT/UPDATE/DELETE query and commit
 def run_action(sql_query_text, sql_query_parameters=()):
-    # TODO implement action query execution pattern
-    pass
+    database_connection = open_database_connection()
+    action_cursor = database_connection.cursor()
+    action_cursor.execute(sql_query_text, sql_query_parameters)
+    database_connection.commit()
+    action_cursor.close()
+    database_connection.close()
 
 # Render homepage with nav links
 @app.route("/")
@@ -227,7 +240,7 @@ def delete_service_ticket_item_record():
 # APP START
 if __name__ == "__main__":
     # Debug true while developing
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("APP_PORT", "8317")), debug=True)
 
 
 
