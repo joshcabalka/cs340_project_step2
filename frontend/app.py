@@ -386,25 +386,52 @@ def delete_rental_order_item_record():
 # Browse service_tickets records
 @app.route("/service_tickets", methods=["GET"])
 def render_service_tickets_page():
-    #TODO SELECT service_tickets
+    # Select all service ticket records
+    service_ticket_rows = run_select("SELECT * FROM service_tickets ORDER BY service_ticket_id")
     return render_template("service_tickets.html", rows=service_ticket_rows)
 
 # Add one service_tickets record
 @app.route("/service_tickets/add", methods=["POST"])
 def add_service_ticket_record():
-    #TODO INSERT into service_tickets
+    opened_by_employee_id_value = request.form.get("opened_by_employee_id")
+    service_ticket_status = request.form.get("status", "").strip()
+    service_ticket_created_at = request.form.get("created_at", "").strip()
+
+    # Take the input data and add it to the database using parameterized SQL queries
+    run_action(
+        """
+        INSERT INTO service_tickets (opened_by_employee_id, status, created_at)
+        VALUES (%s, %s, %s)
+        """,
+        (opened_by_employee_id_value, service_ticket_status, service_ticket_created_at),
+    )
     return redirect(url_for("render_service_tickets_page"))
 
 # Update one service_tickets record by service_ticket_id
 @app.route("/service_tickets/update", methods=["POST"])
 def update_service_ticket_record():
-    #TODO UPDATE service_tickets
+    target_service_ticket_id = request.form.get("service_ticket_id")
+    updated_opened_by_employee_id = request.form.get("opened_by_employee_id")
+    updated_status = request.form.get("status", "").strip()
+    updated_created_at = request.form.get("created_at", "").strip()
+
+    # Take the input data and update the database using parameterized SQL queries
+    run_action(
+        """
+        UPDATE service_tickets
+        SET opened_by_employee_id = %s, status = %s, created_at = %s
+        WHERE service_ticket_id = %s
+        """,
+        (updated_opened_by_employee_id, updated_status, updated_created_at, target_service_ticket_id),
+    )
     return redirect(url_for("render_service_tickets_page"))
 
 # Delete one service_tickets record by service_ticket_id
 @app.route("/service_tickets/delete", methods=["POST"])
 def delete_service_ticket_record():
-    #TODO DELETE from service_tickets
+    service_ticket_id_to_delete = request.form.get("service_ticket_id")
+    # Take the input and delete the specified record
+    run_action("DELETE FROM service_tickets WHERE service_ticket_id = %s", (service_ticket_id_to_delete,))
     return redirect(url_for("render_service_tickets_page"))
 
 # SERVICE TICKET ITEMS ROUTES
@@ -412,13 +439,16 @@ def delete_service_ticket_record():
 # Browse service_ticket_items records
 @app.route("/service_ticket_items", methods=["GET"])
 def render_service_ticket_items_page():
-    #TODO SELECT service_ticket_items
+    # Select all service ticket records
+    service_ticket_item_rows = run_select(
+        "SELECT * FROM service_ticket_items ORDER BY service_ticket_id, gear_item_id"
+    )
     return render_template("service_ticket_items.html", rows=service_ticket_item_rows)
 
 # Add one service_ticket_items record
 @app.route("/service_ticket_items/add", methods=["POST"])
 def add_service_ticket_item_record():
-    #TODO INSERT into service_ticket_items
+    related_service_ticket_id
     return redirect(url_for("render_service_ticket_items_page"))
 
 # Update one service_ticket_items record by service_ticket_item_id
