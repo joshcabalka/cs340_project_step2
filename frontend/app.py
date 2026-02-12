@@ -34,7 +34,7 @@ def load_queries_from_dml(dml_file_path: Path):
     # Get each line from the dml file and isolate it
     with dml_file_path.open("r", encoding="utf-8") as dml_file:
         for raw_line in dml_file:
-            line = raw_line.rstrip
+            line = raw_line.rstrip("\n")
             if line.strip().lower().startswith("-- name:"):
                 # Save the previous query before moving onto the next
                 if current_key is not None:
@@ -74,7 +74,7 @@ def open_database_connection():
 # Execute a SELECT  query and return rows as dictionaries
 def run_select(sql_query_text, sql_query_parameters=()):
     database_connection = open_database_connection()
-    dictionary_cursor = database_connection.cursor(dictionary=True)
+    dictionary_cursor = database_connection.cursor(dictionary=True, buffered=True)
     dictionary_cursor.execute(sql_query_text, sql_query_parameters)
     selected_rows = dictionary_cursor.fetchall()
     dictionary_cursor.close()
@@ -84,7 +84,7 @@ def run_select(sql_query_text, sql_query_parameters=()):
 # Run INSERT/UPDATE/DELETE query and commit
 def run_action(sql_query_text, sql_query_parameters=()):
     database_connection = open_database_connection()
-    action_cursor = database_connection.cursor()
+    action_cursor = database_connection.cursor(buffered=True)
     action_cursor.execute(sql_query_text, sql_query_parameters)
     database_connection.commit()
     action_cursor.close()
