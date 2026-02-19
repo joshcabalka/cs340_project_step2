@@ -189,4 +189,4 @@ CALL service_ticket_items_delete(%s, %s);
 -- DATABASE RESET
 
 -- name: db_reset
-CALL reset_sql();
+CALL sp_reset_ski_resort_db();
