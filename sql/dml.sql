@@ -9,6 +9,8 @@
     app.py loads and executes queries by these names
  */
 
+-- name: db_reset
+CALL sp_reset_ski_resort_db();
 
 -- CUSTOMERS
 

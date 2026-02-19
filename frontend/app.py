@@ -106,6 +106,12 @@ def parse_active_flag(raw_value):
 def render_index_page():
     return render_template("index.html")
 
+# Reset the database back to original state
+@app.route("/reset", methods=["POST"])
+def reset_database():
+    run_action(get_sql("db_reset"))
+    return redirect(url_for("render_index_page"))
+
 #CUSTOMER ROUTES
 
 # Browse customer records
