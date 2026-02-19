@@ -81,7 +81,7 @@ def run_select(sql_query_text, sql_query_parameters=()):
     database_connection.close()
     return selected_rows
 
-# Run INSERT/UPDATE/DELETE query and commit
+# Run INSERT/UPDATE/DELETE query and commit (Calls stored procedures)
 def run_action(sql_query_text, sql_query_parameters=()):
     database_connection = open_database_connection()
     action_cursor = database_connection.cursor(buffered=True)
@@ -91,10 +91,14 @@ def run_action(sql_query_text, sql_query_parameters=()):
         if action_cursor.with_rows:
             action_cursor.fetchall()
         # Drain any extra results produced by the stored procedure
-        while action_cursor.nextset():
-            if action_cursor.with_rows:
-                action_cursor.fetchall()
-
+        try:
+            while action_cursor.nextset():
+                if action_cursor.with_rows:
+                    action_cursor.fetchall()
+        except mysql.connector.errors.InterfaceError:
+            # If no results, we pass
+            pass
+        
         database_connection.commit()
     finally:
         # Close all resources
