@@ -12,6 +12,7 @@
 </head>
 <body>
   <div class="container">
+    {% include "_nav.html" %}
     <div class="panel">
       <a href="{{ url_for('render_index_page') }}">Back to Index</a>
       <h1>Service Tickets</h1>
@@ -59,7 +60,7 @@
             <option value="open">Open</option>
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="canceled">Canceled</option>
           </select>
         </div>
         <div class="row"><label>created_at</label><input type="datetime-local" name="created_at" required></div>

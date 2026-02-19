@@ -10,6 +10,7 @@
 </head>
 <body>
   <div class="container">
+    {% include "_nav.html" %}
     <div class="panel">
       <h1>Ski Resort Gear Rental System</h1>
       <p>Select a page:</p>
@@ -22,6 +23,9 @@
         <a href="{{ url_for('render_service_tickets_page') }}">Service Tickets</a>
         <a href="{{ url_for('render_service_ticket_items_page') }}">Service Ticket Items</a>
       </div>
+      <form method="post" action="{{ url_for('reset_database') }}"
+            onsubmit="return confirm('Reset database back to original sample data?');">
+        <button type="submit">Reset database</button>
     </div>
   </div>
 </body>

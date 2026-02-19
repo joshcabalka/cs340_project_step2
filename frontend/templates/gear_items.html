@@ -12,6 +12,7 @@
 </head>
 <body>
   <div class="container">
+    {% include "_nav.html" %}
     <div class="panel">
       <a href="{{ url_for('render_index_page') }}">Back to Index</a>
       <h1>Gear Items</h1>
@@ -54,12 +55,10 @@
           <label>category</label>
           <select name="category" required>
             <option value="">-- Select Category --</option>
-            <option value="snowboard">Snowboard</option>
-            <option value="boots">Boots</option>
-            <option value="helmet">Helmet</option>
-            <option value="skis">Skis</option>
-            <option value="poles">Poles</option>
-            <option value="other">Other</option>
+            <option value="Snowboard">Snowboard</option>
+            <option value="Boots">Boots</option>
+            <option value="Helmet">Helmet</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div class="row"><label>brand</label><input name="brand" required></div>
@@ -73,7 +72,7 @@
             <option value="new">New</option>
             <option value="good">Good</option>
             <option value="fair">Fair</option>
-            <option value="poor">Poor</option>
+            <option value="needs_repair">Poor</option>
           </select>
         </div>
         <div class="row">
