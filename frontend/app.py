@@ -85,10 +85,21 @@ def run_select(sql_query_text, sql_query_parameters=()):
 def run_action(sql_query_text, sql_query_parameters=()):
     database_connection = open_database_connection()
     action_cursor = database_connection.cursor(buffered=True)
-    action_cursor.execute(sql_query_text, sql_query_parameters)
-    database_connection.commit()
-    action_cursor.close()
-    database_connection.close()
+    try:
+        action_cursor.execute(sql_query_text, sql_query_parameters)
+        # Ensure that all results are consumed before closing (avoids sync issues)
+        if action_cursor.with_rows:
+            action_cursor.fetchall()
+        # Drain any extra results produced by the stored procedure
+        while action_cursor.nextset():
+            if action_cursor.with_rows:
+                action_cursor.fetchall()
+
+        database_connection.commit()
+    finally:
+        # Close all resources
+        action_cursor.close()
+        database_connection.close()
 
 # Input helper function for converting blank input to None 
 # Makes SQL store NULL for empty fields
