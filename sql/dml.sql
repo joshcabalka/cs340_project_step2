@@ -18,12 +18,27 @@ FROM customers
 ORDER BY customer_id;
 
 -- name: customers_add
+-- ORIGINAL:
+-- INSERT INTO customers (first_name, last_name, email, phone)
+-- VALUES (%s, %s, %s, %s);
 CALL customers_add(%s, %s, %s, %s);
 
 -- name: customers_update
+-- name: customers_update
+-- ORIGINAL:
+-- UPDATE customers
+-- SET first_name = %s,
+--     last_name = %s,
+--     email = %s,
+--     phone = %s
+-- WHERE customer_id = %s;
 CALL customers_update(%s, %s, %s, %s, %s);
 
 -- name: customers_delete
+-- name: customers_delete
+-- ORIGINAL:
+-- DELETE FROM customers
+-- WHERE customer_id = %s;
 CALL customers_delete(%s);
 
 
@@ -35,12 +50,25 @@ FROM employees
 ORDER BY employee_id;
 
 -- name: employees_add
+-- ORIGINAL:
+-- INSERT INTO employees (first_name, last_name, role, is_active)
+-- VALUES (%s, %s, %s, %s);
 CALL employees_add(%s, %s, %s, %s);
 
 -- name: employees_update
+-- ORIGINAL:
+-- UPDATE employees
+-- SET first_name = %s,
+--     last_name = %s,
+--     role = %s,
+--     is_active = %s
+-- WHERE employee_id = %s;
 CALL employees_update(%s, %s, %s, %s, %s);
 
 -- name: employees_delete
+-- ORIGINAL:
+-- DELETE FROM employees
+-- WHERE employee_id = %s;
 CALL employees_delete(%s);
 
 
@@ -60,12 +88,30 @@ FROM gear_items
 ORDER BY gear_item_id;
 
 -- name: gear_items_add
+-- ORIGINAL:
+-- INSERT INTO gear_items
+-- (category, brand, model, serial_number, size, condition_grade, status, acquired_at)
+-- VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
 CALL gear_items_add(%s, %s, %s, %s, %s, %s, %s, %s);
 
 -- name: gear_items_update
+-- ORIGINAL:
+-- UPDATE gear_items
+-- SET category = %s,
+--     brand = %s,
+--     model = %s,
+--     serial_number = %s,
+--     size = %s,
+--     condition_grade = %s,
+--     status = %s,
+--     acquired_at = %s
+-- WHERE gear_item_id = %s;
 CALL gear_items_update(%s, %s, %s, %s, %s, %s, %s, %s, %s);
 
 -- name: gear_items_delete
+-- ORIGINAL:
+-- DELETE FROM gear_items
+-- WHERE gear_item_id = %s;
 CALL gear_items_delete(%s);
 
 
@@ -90,12 +136,24 @@ FROM employees
 ORDER BY employee_id;
 
 -- name: rental_orders_add
+-- ORIGINAL:
+-- INSERT INTO rental_orders (customer_id, created_by_employee_id, created_at)
+-- VALUES (%s, %s, %s);
 CALL rental_orders_add(%s, %s, %s);
 
 -- name: rental_orders_update
+-- ORIGINAL:
+-- UPDATE rental_orders
+-- SET customer_id = %s,
+--     created_by_employee_id = %s,
+--     created_at = %s
+-- WHERE rental_order_id = %s;
 CALL rental_orders_update(%s, %s, %s, %s);
 
 -- name: rental_orders_delete
+-- ORIGINAL:
+-- DELETE FROM rental_orders
+-- WHERE rental_order_id = %s;
 CALL rental_orders_delete(%s);
 
 
@@ -121,12 +179,29 @@ FROM gear_items
 ORDER BY gear_item_id;
 
 -- name: rental_order_items_add
+-- ORIGINAL:
+-- INSERT INTO rental_order_items
+-- (rental_order_id, gear_item_id, checked_out_at, due_at, returned_at)
+-- VALUES (%s, %s, %s, %s, %s);
 CALL rental_order_items_add(%s, %s, %s, %s, %s);
 
 -- name: rental_order_items_update
+-- ORIGINAL:
+-- UPDATE rental_order_items
+-- SET rental_order_id = %s,
+--     gear_item_id = %s,
+--     checked_out_at = %s,
+--     due_at = %s,
+--     returned_at = %s
+-- WHERE rental_order_id = %s
+--   AND gear_item_id = %s;
 CALL rental_order_items_update(%s, %s, %s, %s, %s, %s, %s);
 
 -- name: rental_order_items_delete
+-- ORIGINAL:
+-- DELETE FROM rental_order_items
+-- WHERE rental_order_id = %s
+--   AND gear_item_id = %s;
 CALL rental_order_items_delete(%s, %s);
 
 
@@ -146,12 +221,24 @@ FROM employees
 ORDER BY employee_id;
 
 -- name: service_tickets_add
+-- ORIGINAL:
+-- INSERT INTO service_tickets (opened_by_employee_id, status, created_at)
+-- VALUES (%s, %s, %s);
 CALL service_tickets_add(%s, %s, %s);
 
 -- name: service_tickets_update
+-- ORIGINAL:
+-- UPDATE service_tickets
+-- SET opened_by_employee_id = %s,
+--     status = %s,
+--     created_at = %s
+-- WHERE service_ticket_id = %s;
 CALL service_tickets_update(%s, %s, %s, %s);
 
 -- name: service_tickets_delete
+-- ORIGINAL:
+-- DELETE FROM service_tickets
+-- WHERE service_ticket_id = %s;
 CALL service_tickets_delete(%s);
 
 
@@ -177,12 +264,29 @@ FROM gear_items
 ORDER BY gear_item_id;
 
 -- name: service_ticket_items_add
+-- ORIGINAL:
+-- INSERT INTO service_ticket_items
+-- (service_ticket_id, gear_item_id, service_type, started_at, completed_at)
+-- VALUES (%s, %s, %s, %s, %s);
 CALL service_ticket_items_add(%s, %s, %s, %s, %s);
 
 -- name: service_ticket_items_update
+-- ORIGINAL:
+-- UPDATE service_ticket_items
+-- SET service_ticket_id = %s,
+--     gear_item_id = %s,
+--     service_type = %s,
+--     started_at = %s,
+--     completed_at = %s
+-- WHERE service_ticket_id = %s
+--   AND gear_item_id = %s;
 CALL service_ticket_items_update(%s, %s, %s, %s, %s, %s, %s);
 
 -- name: service_ticket_items_delete
+-- ORIGINAL:
+-- DELETE FROM service_ticket_items
+-- WHERE service_ticket_id = %s
+--   AND gear_item_id = %s;
 CALL service_ticket_items_delete(%s, %s);
 
 
