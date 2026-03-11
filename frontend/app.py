@@ -6,6 +6,9 @@
 # This file starts a flask web app, connects to the MySQL database,
 # Defines one page per entity and supports Browse/Add/Update/Delete operations
 
+# CITATION
+# Date 3/11/2026
+# This file is original work by the project team unless otherwise cited
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import os
@@ -17,7 +20,7 @@ load_dotenv()
 # Setup Flask app
 app = Flask(__name__)
 
-# Server connection details TODO: update info
+# Server connection details
 DB_CONFIG = {
     "host": os.getenv("DB_HOST"),
     "user": os.getenv("DB_USER"),

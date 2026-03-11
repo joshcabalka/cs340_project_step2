@@ -4,6 +4,7 @@
     CS340 
     2/10/2026
     Project 3 - SQL reset procedure to reset database to original.
+    CITATION: Original work by project team unless otherwise cited
  */
 
 

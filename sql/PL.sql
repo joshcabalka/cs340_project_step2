@@ -1,3 +1,4 @@
+/* CITATION: Original work by project team unless otherwise cited*/
 DELIMITER //
 
 -- CUSTOMERS

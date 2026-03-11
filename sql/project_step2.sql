@@ -1,6 +1,7 @@
 /*
     CS340 Project Step 2 - Ski Resort Gear Rental System
     Group 80: Joshua Cabalka, Jack Boland, Philip Gadsden
+    CITATION: Original work by project team unless otherwise cited
 */
 
 
