@@ -1,8 +1,13 @@
 <!-- Employees page using this pattern: -->
- <!-- Title, browse table, add, update, delete, and back to index nav -->
-  <!-- Bind all fields and actions to the employees table -->
-   <!-- templates/employees.html -->
-      <!-- CITATION: Original work by project team unless otherwise cited-->
+<!-- Title, browse table, add, update, delete, and back to index nav -->
+<!-- Bind all fields and actions to the employees table -->
+<!-- templates/employees.html -->
+<!-- CITATION: Original work by project team unless otherwise cited-->
+<!-- Citation for use of AI tools:
+     Date: 2026-03-12
+     Prompts used to generate: Keep the existing update dropdown for employee_id, 
+     but auto-populate the selected employee's current values in the update form before submission.
+     AI Source URL: https://chatgpt.com/ -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -63,21 +68,27 @@
       <form method="post" action="/employees/update">
         <div class="row">
           <label>employee_id</label>
-          <select name="employee_id" required>
+          <select name="employee_id" id="employee_id_select" required>
             <option value="">-- Select Employee --</option>
             {% for employee in rows %}
-            <option value="{{ employee.employee_id }}">
+            <option
+              value="{{ employee.employee_id }}"
+              data-first-name="{{ employee.first_name }}"
+              data-last-name="{{ employee.last_name }}"
+              data-role="{{ employee.role }}"
+              data-is-active="{{ employee.is_active }}"
+            >
               {{ employee.employee_id }} - {{ employee.first_name }} {{ employee.last_name }} ({{ employee.role }})
             </option>
             {% endfor %}
           </select>
         </div>
-        <div class="row"><label>first_name</label><input name="first_name" required></div>
-        <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>role</label><input name="role" required></div>
+        <div class="row"><label>first_name</label><input id="employee_first_name" name="first_name" required></div>
+        <div class="row"><label>last_name</label><input id="employee_last_name" name="last_name" required></div>
+        <div class="row"><label>role</label><input id="employee_role" name="role" required></div>
         <div class="row">
           <label>is_active</label>
-          <select name="is_active" required>
+          <select id="employee_is_active" name="is_active" required>
             <option value="1">Active (1)</option>
             <option value="0">Inactive (0)</option>
           </select>
@@ -104,5 +115,18 @@
       </form>
     </div>
   </div>
+
+  <script>
+    const employeeSelect = document.getElementById("employee_id_select");
+
+    employeeSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+
+      document.getElementById("employee_first_name").value = selected.dataset.firstName || "";
+      document.getElementById("employee_last_name").value = selected.dataset.lastName || "";
+      document.getElementById("employee_role").value = selected.dataset.role || "";
+      document.getElementById("employee_is_active").value = selected.dataset.isActive || "1";
+    });
+  </script>
 </body>
 </html>

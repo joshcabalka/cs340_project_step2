@@ -1,6 +1,11 @@
 <!-- Customers page -->
- <!-- templates/customers.html -->
-  <!-- CITATION: Original work by project team unless otherwise cited-->
+<!-- templates/customers.html -->
+<!-- CITATION: Original work by project team unless otherwise cited-->
+<!-- Citation for use of AI tools:
+     Date: 2026-03-12
+     Prompts used to generate: Keep the existing update dropdown for customer_id, 
+     but auto-populate the selected customer's current values in the update form before submission.
+     AI Source URL: https://chatgpt.com/ -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -55,19 +60,25 @@
       <form method="post" action="/customers/update">
         <div class="row">
           <label>customer_id</label>
-          <select name="customer_id" required>
+          <select name="customer_id" id="customer_id_select" required>
             <option value="">-- Select Customer --</option>
-              {% for customer in rows %}
-            <option value="{{ customer.customer_id }}">
+            {% for customer in rows %}
+            <option
+              value="{{ customer.customer_id }}"
+              data-first-name="{{ customer.first_name }}"
+              data-last-name="{{ customer.last_name }}"
+              data-email="{{ customer.email or '' }}"
+              data-phone="{{ customer.phone or '' }}"
+            >
               {{ customer.customer_id }} - {{ customer.first_name }} {{ customer.last_name }}
             </option>
             {% endfor %}
           </select>
         </div>
-        <div class="row"><label>first_name</label><input name="first_name" required></div>
-        <div class="row"><label>last_name</label><input name="last_name" required></div>
-        <div class="row"><label>email</label><input name="email"></div>
-        <div class="row"><label>phone</label><input name="phone"></div>
+        <div class="row"><label>first_name</label><input id="customer_first_name" name="first_name" required></div>
+        <div class="row"><label>last_name</label><input id="customer_last_name" name="last_name" required></div>
+        <div class="row"><label>email</label><input id="customer_email" name="email"></div>
+        <div class="row"><label>phone</label><input id="customer_phone" name="phone"></div>
         <button type="submit">Update</button>
       </form>
     </div>
@@ -89,8 +100,19 @@
         <button type="submit">Delete</button>
       </form>
     </div>
-
   </div>
+
+  <script>
+    const customerSelect = document.getElementById("customer_id_select");
+
+    customerSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+
+      document.getElementById("customer_first_name").value = selected.dataset.firstName || "";
+      document.getElementById("customer_last_name").value = selected.dataset.lastName || "";
+      document.getElementById("customer_email").value = selected.dataset.email || "";
+      document.getElementById("customer_phone").value = selected.dataset.phone || "";
+    });
+  </script>
 </body>
 </html>
-

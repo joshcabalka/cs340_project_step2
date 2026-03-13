@@ -1,7 +1,13 @@
 <!-- Rental orders page using this pattern: -->
- <!-- Title, browse table, add, update, delete, back to index nav -->
-  <!-- Bind all fields and actions to the rental_orders table -->
-   <!-- templates/gear_items.html -->
+<!-- Title, browse table, add, update, delete, back to index nav -->
+<!-- Bind all fields and actions to the rental_orders table -->
+<!-- templates/gear_items.html -->
+<!-- Citation for use of AI tools:
+     Date: 2026-03-12
+     Prompts used to generate: Keep the existing update dropdown for gear_item_id, 
+     auto-populate the selected gear item's current values in the update form before submission, 
+     and align the gear item form option values with the database enum values.
+     AI Source URL: https://chatgpt.com/ -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -55,10 +61,10 @@
           <label>category</label>
           <select name="category" required>
             <option value="">-- Select Category --</option>
-            <option value="Snowboard">Snowboard</option>
-            <option value="Boots">Boots</option>
-            <option value="Helmet">Helmet</option>
-            <option value="Other">Other</option>
+            <option value="snowboard">Snowboard</option>
+            <option value="boots">Boots</option>
+            <option value="helmet">Helmet</option>
+            <option value="other">Other</option>
           </select>
         </div>
         <div class="row"><label>brand</label><input name="brand" required></div>
@@ -72,7 +78,7 @@
             <option value="new">New</option>
             <option value="good">Good</option>
             <option value="fair">Fair</option>
-            <option value="needs_repair">Poor</option>
+            <option value="needs_repair">Needs Repair</option>
           </select>
         </div>
         <div class="row">
@@ -95,10 +101,20 @@
       <form method="post" action="/gear_items/update">
         <div class="row">
           <label>gear_item_id</label>
-          <select name="gear_item_id" required>
+          <select name="gear_item_id" id="gear_item_id_select" required>
             <option value="">-- Select Gear Item --</option>
             {% for item in rows %}
-            <option value="{{ item.gear_item_id }}">
+            <option
+              value="{{ item.gear_item_id }}"
+              data-category="{{ item.category }}"
+              data-brand="{{ item.brand }}"
+              data-model="{{ item.model }}"
+              data-serial-number="{{ item.serial_number }}"
+              data-size="{{ item.size }}"
+              data-condition-grade="{{ item.condition_grade }}"
+              data-status="{{ item.status }}"
+              data-acquired-at="{{ item.acquired_at.strftime('%Y-%m-%dT%H:%M') if item.acquired_at else '' }}"
+            >
               {{ item.gear_item_id }} - {{ item.category }} - {{ item.brand }} {{ item.model }}
             </option>
             {% endfor %}
@@ -106,33 +122,31 @@
         </div>
         <div class="row">
           <label>category</label>
-          <select name="category" required>
+          <select id="gear_category" name="category" required>
             <option value="">-- Select Category --</option>
             <option value="snowboard">Snowboard</option>
             <option value="boots">Boots</option>
             <option value="helmet">Helmet</option>
-            <option value="skis">Skis</option>
-            <option value="poles">Poles</option>
             <option value="other">Other</option>
           </select>
         </div>
-        <div class="row"><label>brand</label><input name="brand" required></div>
-        <div class="row"><label>model</label><input name="model" required></div>
-        <div class="row"><label>serial_number</label><input name="serial_number" required></div>
-        <div class="row"><label>size</label><input name="size" required></div>
+        <div class="row"><label>brand</label><input id="gear_brand" name="brand" required></div>
+        <div class="row"><label>model</label><input id="gear_model" name="model" required></div>
+        <div class="row"><label>serial_number</label><input id="gear_serial_number" name="serial_number" required></div>
+        <div class="row"><label>size</label><input id="gear_size" name="size" required></div>
         <div class="row">
           <label>condition_grade</label>
-          <select name="condition_grade" required>
+          <select id="gear_condition_grade" name="condition_grade" required>
             <option value="">-- Select Condition --</option>
             <option value="new">New</option>
             <option value="good">Good</option>
             <option value="fair">Fair</option>
-            <option value="poor">Poor</option>
+            <option value="needs_repair">Needs Repair</option>
           </select>
         </div>
         <div class="row">
           <label>status</label>
-          <select name="status" required>
+          <select id="gear_status" name="status" required>
             <option value="">-- Select Status --</option>
             <option value="available">Available</option>
             <option value="rented">Rented</option>
@@ -140,7 +154,7 @@
             <option value="retired">Retired</option>
           </select>
         </div>
-        <div class="row"><label>acquired_at</label><input type="datetime-local" name="acquired_at" required></div>
+        <div class="row"><label>acquired_at</label><input id="gear_acquired_at" type="datetime-local" name="acquired_at" required></div>
         <button type="submit">Update</button>
       </form>
     </div>
@@ -163,5 +177,22 @@
       </form>
     </div>
   </div>
+
+  <script>
+    const gearItemSelect = document.getElementById("gear_item_id_select");
+
+    gearItemSelect.addEventListener("change", function () {
+      const selected = this.options[this.selectedIndex];
+
+      document.getElementById("gear_category").value = selected.dataset.category || "";
+      document.getElementById("gear_brand").value = selected.dataset.brand || "";
+      document.getElementById("gear_model").value = selected.dataset.model || "";
+      document.getElementById("gear_serial_number").value = selected.dataset.serialNumber || "";
+      document.getElementById("gear_size").value = selected.dataset.size || "";
+      document.getElementById("gear_condition_grade").value = selected.dataset.conditionGrade || "";
+      document.getElementById("gear_status").value = selected.dataset.status || "";
+      document.getElementById("gear_acquired_at").value = selected.dataset.acquiredAt || "";
+    });
+  </script>
 </body>
 </html>
